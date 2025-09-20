@@ -10,7 +10,7 @@ const routes = [
     meta: { layout: AppLayout }
   },
   {
-    path: "/json-beautify",
+    path: "/json-formatter",
     component: JsonFormatter,
     meta: { layout: AppLayout }
   },
