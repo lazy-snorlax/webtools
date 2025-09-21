@@ -7,8 +7,9 @@
       <div class="p-4">
         <div class="flex flex-wrap items-center gap-2 text-sm">
             <select v-model="conversion" class="select select-primary">
-                <option disabled selected>Pick a Conversion</option>
+                <!-- <option disabled selected>Pick a Conversion</option> -->
                 <option>PHP Array</option>
+                <option>Go Slice</option>
             </select>
             <button class="btn btn-primary" @click="convertJson">Convert</button>
             <button class="btn btn-primary" @click="clearJson">Clear</button>
@@ -67,10 +68,22 @@ function clearJson() {
 }
 
 function convertJson() {
-    const parsed = JSON.parse(rawInput.value)
-    console.log(">>>> ", conversion.value, parsed)
-    if (conversion.value.includes("PHP Array")) {
-        formatted.value = jsonToPhpArray(parsed)
+    error.value = '';
+    try {
+        const parsed = JSON.parse(rawInput.value);        
+        console.log(">>>> ", conversion.value, parsed)
+        switch (conversion.value) {
+            case "PHP Array":
+                formatted.value = jsonToPhpArray(parsed)
+                break;
+            case "Go Slice":
+                formatted.value = jsonToGoSlice(parsed)
+                break;
+            default:
+                break;
+        }
+    } catch (e) {
+        error.value = `❌ Invalid JSON – ${e.message}`;
     }
 }
 
@@ -109,4 +122,45 @@ function jsonToPhpArray(data, indentLevel = 0) {
     return `[\n${indent}    ${entries.join(`,\n${indent}    `)}\n${indent}]`;
 }
 
+function jsonToGoSlice(data, indentLvl = 0) {
+    const indent = '    '.repeat(indentLvl); // 4‑space indentation
+
+    // ---------- Primitive values ----------
+    if (data === null) { return 'nil'; }
+    if (typeof data === 'boolean') { return data ? 'true' : 'false'; }
+    if (typeof data === 'number') { return Number.isInteger(data) ? `${data}` : `${data}`; }
+    if (typeof data === 'string') {
+        // Escape backslashes and double quotes for Go string literals.
+        const esc = data
+            .replace(/\\/g, '\\\\')
+            .replace(/"/g, '\\"')
+            .replace(/\n/g, '\\n')
+            .replace(/\r/g, '\\r')
+            .replace(/\t/g, '\\t');
+        return `"${esc}"`;
+    }
+
+    // Arrays (slices)
+    if (Array.isArray(data)) {
+        if (data.length === 0) { return '[]interface{}{}'; }
+        const elems = data.map(v => jsonToGoSlice(v, indentLvl + 1));
+        return `[]interface{}{\n${indent}    ${elems.join(`,\n${indent}    `)}\n${indent}}`;
+    }
+
+    // Objects (maps)
+    const keys = Object.keys(data);
+    if (keys.length === 0) { return 'map[string]interface{}{}'; }
+    const entries = keys.map(k => {
+        // Escape key for Go string literal
+        const escKey = k
+            .replace(/\\/g, '\\\\')
+            .replace(/"/g, '\\"')
+            .replace(/\n/g, '\\n')
+            .replace(/\r/g, '\\r')
+            .replace(/\t/g, '\\t');
+        const val = jsonToGoSlice(data[k], indentLvl + 1);
+        return `"${escKey}": ${val}`;
+    });
+    return `map[string]interface{}{\n${indent}    ${entries.join(`,\n${indent}    `)}\n${indent}}`;
+}
 </script>
