@@ -2,6 +2,7 @@ import AppLayout from '@/layouts/AppLayout.vue'
 import Home from '@/pages/Home.vue'
 import JsonConvertor from '@/pages/JsonConvertor.vue'
 import JsonFormatter from '@/pages/JsonFormatter.vue'
+import MeasurementConvertor from '@/pages/MeasurementConvertor.vue'
 import { createRouter, createWebHistory } from 'vue-router'
 
 const routes = [
@@ -18,6 +19,11 @@ const routes = [
   {
     path: "/json-convertor",
     component: JsonConvertor,
+    meta: { layout: AppLayout }
+  },
+  {
+    path: "/measurement-convertor",
+    component: MeasurementConvertor,
     meta: { layout: AppLayout }
   },
 ]
