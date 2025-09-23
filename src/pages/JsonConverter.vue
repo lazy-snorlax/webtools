@@ -1,6 +1,6 @@
 <template>
     <section class="space-y-6">
-    <h2 class="text-3xl font-bold">JSON Convertor</h2>
+    <h2 class="text-3xl font-bold">JSON Converter</h2>
 
     <!-- Controls -->
     <div class="rounded-xl border backdrop-blur-sm">
