@@ -1,0 +1,62 @@
+<template>
+    <section class="space-y-6">
+        <h2 class="text-3xl font-bold">Unit Converter</h2>
+
+        <!-- Categories -->
+         <div class="rounded-xl border backdrop-blur-sm">
+            <div class="p-4">
+                <h3 class="text-xl pb-4">Categories</h3>
+                <div class="flex flex-wrap items-center gap-2 text-sm">
+                    <!-- <button class="btn btn-primary">Length</button> -->
+                    <button
+                        v-for="c in categories"
+                        :key="c.key"
+                        class="btn btn-primary"
+                        :class="{ 'btn-outline': activeKey !== c.key }"
+                        @click="loadComponent(c.key)"
+                        type="button"
+                    >
+                        {{ c.label }}
+                    </button>
+                </div>
+            </div>
+         </div>
+
+         <Suspense>
+            <component :is="currentComponent" />
+            <template #fallback>
+                <p class="loading">Loading…</p>
+            </template>
+        </Suspense>
+    </section>
+</template>
+
+<script setup lang="ts">
+import { ref, defineAsyncComponent, shallowRef } from 'vue'
+
+const categories = [
+  { key: 'length', label: 'Length' },
+  { key: 'weight', label: 'Weight' },
+  { key: 'temp',   label: 'Temperature' }
+]
+
+const activeKey = ref('length')
+let currentComponent = shallowRef(null)
+
+function loadComponent(key) {
+    activeKey.value = key
+
+    // Map the key to the async component import
+    const loaderMap = {
+        length: () => import('../components/LengthConverter.vue'),
+        weight: () => import('../components/WeightConverter.vue'),
+        temp:   () => import('../components/TempConverter.vue'),
+    }
+
+    // `defineAsyncComponent` gives us a component that Vite will code‑split
+    currentComponent.value = defineAsyncComponent(loaderMap[key])
+}
+
+// Load the default component on mount
+loadComponent(activeKey.value)
+</script>
