@@ -59,7 +59,7 @@ import { ref } from 'vue';
 const rawInput = ref('');
 const formatted = ref('');
 const error = ref('');
-const conversion = ref('')
+const conversion = ref('PHP Array')
 
 function clearJson() {
   rawInput.value = '';
