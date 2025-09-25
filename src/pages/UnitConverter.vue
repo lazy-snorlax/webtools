@@ -37,7 +37,8 @@ import { ref, defineAsyncComponent, shallowRef } from 'vue'
 const categories = [
   { key: 'length', label: 'Length' },
   { key: 'weight', label: 'Weight' },
-  { key: 'temp',   label: 'Temperature' }
+  { key: 'temp',   label: 'Temperature' },
+  { key: 'area',   label: 'Area' },
 ]
 
 const activeKey = ref('length')
@@ -51,6 +52,7 @@ function loadComponent(key) {
         length: () => import('../components/LengthConverter.vue'),
         weight: () => import('../components/WeightConverter.vue'),
         temp:   () => import('../components/TempConverter.vue'),
+        area:   () => import('../components/AreaConverter.vue'),
     }
 
     // `defineAsyncComponent` gives us a component that Vite will code‑split
