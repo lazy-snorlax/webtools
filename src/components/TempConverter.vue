@@ -1,6 +1,9 @@
 <template>
     <div class="rounded-xl border backdrop-blur-sm">
-        <div class="p-4">                
+        <div class="flex flex-col space-y-1 p-6">
+            <h3 class="text-lg flex items-center gap-2">Temperature Converter</h3>
+        </div>
+        <div class="p-6 pt-0">
             <div class="space-y-2">
                 <label class="text-sm font-medium text-zinc-300"> From:</label>
                 <div class="flex gap-3">

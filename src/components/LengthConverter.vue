@@ -1,6 +1,9 @@
 <template>
     <div class="rounded-xl border backdrop-blur-sm">
-        <div class="p-4">                
+        <div class="flex flex-col space-y-1 p-6">
+            <h3 class="text-lg flex items-center gap-2">Length Converter</h3>
+        </div>
+        <div class="p-6 pt-0">
             <div class="space-y-2">
                 <label class="text-sm font-medium text-zinc-300"> From:</label>
                 <div class="flex gap-3">
@@ -44,7 +47,7 @@ const units: Unit[] = [
     { key: 'km', label: 'Kilometers', factor: 1000 },
 
     { key: 'in', label: 'Inches', factor: 0.0254 },
-    { key: 'ft', label: 'Feet', factor: 0.3048 },
+    { key: 'ft', label: 'Foot', factor: 0.3048 },
     { key: 'yd', label: 'Yard', factor: 0.9144 },
     { key: 'mi', label: 'Mile', factor: 1609.344 },
     { key: 'nmi', label: 'Nautical miles', factor: 1852 },
