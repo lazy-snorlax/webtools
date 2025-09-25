@@ -1,6 +1,9 @@
 <template>
     <div class="rounded-xl border backdrop-blur-sm">
-        <div class="p-4">                
+        <div class="flex flex-col space-y-1 p-6">
+            <h3 class="text-lg flex items-center gap-2">Weight Converter</h3>
+        </div>
+        <div class="p-6 pt-0">
             <div class="space-y-2">
                 <label class="text-sm font-medium text-zinc-300"> From:</label>
                 <div class="flex gap-3">
@@ -38,10 +41,14 @@ interface Unit {
     factor: number // grams per unit
 }
 const units: Unit[] = [
+    { key: 'mg', label: 'Milligram', factor: 0.001 },
     { key: 'g', label: 'Gram', factor: 1 },
     { key: 'kg', label: 'Kilogram', factor: 1000 },
-    { key: 'lb', label: 'Pounds', factor: 453.59237 },
+    { key: 't', label: 'Metric Ton', factor: 1000000 },
+
     { key: 'oz', label: 'Ounces', factor: 28.349523125 },
+    { key: 'lb', label: 'Pounds', factor: 453.59237 },
+    { key: 'st', label: 'Stone', factor: 6350.29318 },
 ]
 
 const inputValue = ref<number>(1)
