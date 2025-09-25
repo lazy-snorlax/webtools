@@ -39,6 +39,7 @@ const categories = [
   { key: 'weight', label: 'Weight' },
   { key: 'temp',   label: 'Temperature' },
   { key: 'area',   label: 'Area' },
+  { key: 'volume',   label: 'Volume' },
 ]
 
 const activeKey = ref('length')
@@ -53,6 +54,7 @@ function loadComponent(key) {
         weight: () => import('../components/WeightConverter.vue'),
         temp:   () => import('../components/TempConverter.vue'),
         area:   () => import('../components/AreaConverter.vue'),
+        volume:   () => import('../components/VolumeConverter.vue'),
     }
 
     // `defineAsyncComponent` gives us a component that Vite will code‑split
