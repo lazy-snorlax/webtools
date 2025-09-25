@@ -6,16 +6,8 @@
          <div class="rounded-xl border backdrop-blur-sm">
             <div class="p-4">
                 <h3 class="text-xl pb-4">Categories</h3>
-                <div class="flex flex-wrap items-center gap-2 text-sm">
-                    <!-- <button class="btn btn-primary">Length</button> -->
-                    <button
-                        v-for="c in categories"
-                        :key="c.key"
-                        class="btn btn-primary"
-                        :class="{ 'btn-outline': activeKey !== c.key }"
-                        @click="loadComponent(c.key)"
-                        type="button"
-                    >
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
+                    <button v-for="c in categories" :key="c.key" class="btn btn-primary" :class="{ 'btn-outline': activeKey !== c.key }" @click="loadComponent(c.key)" type="button">
                         {{ c.label }}
                     </button>
                 </div>
