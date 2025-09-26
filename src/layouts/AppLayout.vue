@@ -11,8 +11,8 @@
                         </router-link>
                     </div>
                     <div class="flex items-center gap-4">
-                        <a class="hidden md:inline-flex items-center px-3 py-2 text-zinc-300 rounded-lg font-medium hover:bg-zinc-800 transition-colors" href="/about">About</a>
-                        <a class="hidden md:inline-flex items-center px-3 py-2 text-zinc-300 rounded-lg font-medium hover:bg-zinc-800 transition-colors" href="/contact">Contact</a>
+                        <router-link class="hidden md:inline-flex items-center px-3 py-2 text-zinc-300 rounded-lg font-medium hover:bg-zinc-800 transition-colors" :to="'/about'">About</router-link>
+                        <router-link class="hidden md:inline-flex items-center px-3 py-2 text-zinc-300 rounded-lg font-medium hover:bg-zinc-800 transition-colors" :to="'/contact'">Contact</router-link>
                         <a class="hidden md:inline-flex items-center gap-2 px-4 py-2 text-zinc-950 rounded-lg font-medium btn btn-primary transition-colors" href="/tools">Browse Tools</a>
                     </div>
                 </div>
@@ -21,7 +21,7 @@
         
         <div class="flex">
             <aside class="fixed left-0 top-16 w-64 border-r h-[calc(100vh-4rem)]">
-                <sidebar />
+                <Sidebar />
             </aside>
             <main class="flex-1 transition-all duration-300 lg:ml-64">
                 <div class="min-h-[calc(100vh-4rem)] pt-16">
@@ -29,20 +29,7 @@
                         <slot />
                     </div>
                 </div>
-                <footer class="footer footer-horizontal footer-center bg-base-200 text-base-content rounded p-10">
-                    <nav class="grid grid-flow-col gap-4">
-                        <a class="link link-hover">About us</a>
-                        <a class="link link-hover">Contact</a>
-                    </nav>
-                    <nav>
-                        <div class="grid grid-flow-col gap-4">
-                            <a>Icon #1</a>
-                        </div>
-                    </nav>
-                    <aside>
-                        <p>Copyright © {{ new Date().getFullYear() }} - All right reserved by ACME Industries Ltd</p>
-                    </aside>
-                </footer>
+                <Footer />
             </main>
         </div>
     </div>
@@ -50,4 +37,5 @@
 
 <script setup lang="ts">
 import Sidebar from '@/components/Sidebar.vue';
+import Footer from '@/components/Footer.vue';
 </script>
