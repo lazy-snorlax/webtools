@@ -1,4 +1,6 @@
 import AppLayout from '@/layouts/AppLayout.vue'
+import About from '@/pages/About.vue'
+import Contact from '@/pages/Contact.vue'
 import Home from '@/pages/Home.vue'
 import JsonConverter from '@/pages/JsonConverter.vue'
 import JsonFormatter from '@/pages/JsonFormatter.vue'
@@ -9,6 +11,16 @@ const routes = [
   {
     path: "/",
     component: Home,
+    meta: { layout: AppLayout }
+  },
+  {
+    path: "/about",
+    component: About,
+    meta: { layout: AppLayout }
+  },
+  {
+    path: "/contact",
+    component: Contact,
     meta: { layout: AppLayout }
   },
   {
