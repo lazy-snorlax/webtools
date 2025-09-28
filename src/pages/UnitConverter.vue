@@ -33,6 +33,7 @@ const categories = [
   { key: 'area',   label: 'Area' },
   { key: 'volume',   label: 'Volume' },
   { key: 'time',   label: 'Time' },
+  { key: 'storage',   label: 'Digital Storage' },
 ]
 
 const activeKey = ref('length')
@@ -49,6 +50,7 @@ function loadComponent(key) {
         area:   () => import('../components/AreaConverter.vue'),
         volume:   () => import('../components/VolumeConverter.vue'),
         time:   () => import('../components/TimeConverter.vue'),
+        storage:   () => import('../components/StorageConverter.vue'),
     }
 
     // `defineAsyncComponent` gives us a component that Vite will code‑split
