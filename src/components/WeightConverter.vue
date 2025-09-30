@@ -68,8 +68,8 @@ const result = computed(() => {
     // Guard against division by zero (should never happen with our data)
     if (!from?.factor || !to?.factor) return 0
 
-    const grams = inputValue.value * from.factor
-    return (grams / to.factor).toPrecision(6)
+    const unit = inputValue.value * from.factor
+    return (unit / to.factor).toPrecision(6)
 })
 
 const formattedResult = computed(() => {
