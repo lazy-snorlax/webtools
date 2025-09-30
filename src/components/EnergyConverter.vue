@@ -38,7 +38,7 @@ import { ref, computed } from 'vue'
 interface Unit {
     key: string
     label: string
-    factor: number // meters per unit
+    factor: number
 }
 const units: Unit[] = [
     { key: 'j',  label: 'Joule (J)',            factor: 1 },
