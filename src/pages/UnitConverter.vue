@@ -36,6 +36,7 @@ const categories = [
   { key: 'storage',   label: 'Digital Storage' },
   { key: 'speed',   label: 'Speed' },
   { key: 'energy',   label: 'Energy' },
+  { key: 'pressure',   label: 'Pressure' },
 ]
 
 const activeKey = ref('length')
@@ -55,6 +56,7 @@ function loadComponent(key) {
         storage:   () => import('../components/StorageConverter.vue'),
         speed:   () => import('../components/SpeedConverter.vue'),
         energy:   () => import('../components/EnergyConverter.vue'),
+        pressure:   () => import('../components/PressureConverter.vue'),
     }
 
     // `defineAsyncComponent` gives us a component that Vite will code‑split
