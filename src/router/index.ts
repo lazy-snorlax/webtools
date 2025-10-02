@@ -4,7 +4,9 @@ import Contact from '@/pages/Contact.vue'
 import Home from '@/pages/Home.vue'
 import JsonConverter from '@/pages/JsonConverter.vue'
 import JsonFormatter from '@/pages/JsonFormatter.vue'
+import LoremGenerator from '@/pages/LoremGenerator.vue'
 import UnitConverter from '@/pages/UnitConverter.vue'
+import WorldClock from '@/pages/WorldClock.vue'
 import { createRouter, createWebHistory } from 'vue-router'
 
 const routes = [
@@ -36,6 +38,16 @@ const routes = [
   {
     path: "/unit-converter",
     component: UnitConverter,
+    meta: { layout: AppLayout }
+  },
+  {
+    path: "/world-clock",
+    component: WorldClock,
+    meta: { layout: AppLayout }
+  },
+  {
+    path: "/lorem-generator",
+    component: LoremGenerator,
     meta: { layout: AppLayout }
   },
 ]
