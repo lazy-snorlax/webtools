@@ -1,30 +1,48 @@
 <!-- LoremGenerator.vue -->
 <template>
-  <div class="lorem-generator">
-    <h2 class="text-lg">📝 Lorem Ipsum Generator</h2>
+  <div class="rounded-xl border backdrop-blur-sm">
+    <div class="p-6">
+      <div class="flex flex-col space-y-1 mb-5">
+        <h3 class="text-lg flex items-center gap-2">Lorem ipsum Generator</h3>
+      </div>
 
-    <div class="my-3">
-        <label>
-            Quantity:
-            <input type="number" min="1" class="input w-full" v-model.number="count" @input="generate" />
-        </label>
-    </div>
-    
-    <div class="my-3">
-        <label>
-            Unit:
+      <div class="space-y-4">
+        <div class="">
+          <label>Generate By:</label>
+          <div class="flex gap-2">
             <select class="select" v-model="unit" @change="generate">
-                <option value="words">Words</option>
-                <option value="sentences">Sentences</option>
-                <option value="paragraphs">Paragraphs</option>
+              <option value="words">Words</option>
+              <option value="sentences">Sentences</option>
+              <option value="paragraphs">Paragraphs</option>
             </select>
-        </label>
-
+          </div>
+        </div>
+        
+        <div class="my-3">
+          <label>
+            How much to generate:
+            <input type="number" min="1" class="input w-full" v-model.number="count" @input="generate" />
+          </label>
+        </div>
+      </div>
+      
+      <div class="my-3">
         <button @click="copyToClipboard">Copy</button>
+      </div>
     </div>
-
-    <div class="rounded-lg p-4">
-        <pre class="whitespace-pre-wrap font-sans text-sm leading-relaxed text-zinc-300">{{ output }}</pre>
+  </div>
+    
+  <div class="rounded-xl border backdrop-blur-sm mt-8">
+    <div class="p-6">
+      <div class="mb-4 flex items-center justify-between">
+        <h3 class="text-lg flex items-center gap-2">Generated Text</h3>
+        <div class="flex gap-4 text-xs">
+          <span>Statistics</span>
+        </div>
+      </div>
+      <div class="rounded-lg p-4">
+        <pre class="whitespace-pre-wrap font-sans text-sm leading-relaxed">{{ output }}</pre>
+      </div>
     </div>
   </div>
 </template>
