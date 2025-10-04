@@ -15,7 +15,7 @@
 
         <div class="p-6 pt-0" v-if="activeKey=='tsDate'">
             <div class="space-y-2">
-                <label for="raw" class="text-sm font-medium text-zinc-300">Enter Unix timestamp (seconds or ms):</label>
+                <label for="raw" class="text-sm font-medium">Enter Unix timestamp (seconds or ms):</label>
                 <div class="flex gap-3">
                     <input id="raw" class="input w-full" v-model="rawInput" placeholder="e.g. 1622548800 or 1622548800000" @input="update()" />
                 </div>
@@ -23,11 +23,17 @@
             </div>
         </div>
 
-        <div class="p-6 pt-0" v-if="activeKey=='dtTs'">
+        <div class="p-6 pt-0 grid grid-cols-2 gap-6" v-if="activeKey=='dtTs'">
             <div class="space-y-2">
-                <label for="raw" class="text-sm font-medium text-zinc-300">Date</label>
+                <label for="raw" class="text-sm font-medium">Date</label>
                 <div class="flex gap-3">
                     <input class="input w-full" type="date" v-model="rawDate" />
+                </div>
+            </div>
+            <div class="space-y-2">
+                <label for="raw" class="text-sm font-medium">Time</label>
+                <div class="flex gap-3">
+                    <input class="input w-full" type="time" v-model="rawTime" />
                 </div>
             </div>
         </div>
@@ -64,7 +70,8 @@ const categories = [
 const activeKey = ref('tsDate')
 
 const rawInput = ref(String(Math.floor(Date.now() / 1000)))
-const rawDate = ref(new Date())
+const rawDate = ref(new Date().toISOString().slice(0,10))
+const rawTime = ref(new Date().toTimeString().slice(0, 8))
 
 function setActiveKey(key) {
   activeKey.value = key
@@ -82,31 +89,52 @@ function parseTimestamp(value) {
   return isNaN(date.getTime()) ? null : date
 }
 
-const date = computed(() => parseTimestamp(rawInput.value))
+/**
+ * Takes the values from the date and time inputs and returns a Date.
+ * Returns null if either field is empty or the combination is invalid.
+ */
+function buildDateFromInputs(dateStr, timeStr) {
+  if (!dateStr || !timeStr) return null
+
+  const isoLike = `${dateStr}T${timeStr}`
+  const d = new Date(isoLike)
+  return isNaN(d.getTime()) ? null : d
+}
+
+/* Mode aware computed sourceDate */
+const sourceDate = computed(() => {
+  if (activeKey.value === 'tsDate') {
+    return parseTimestamp(rawInput.value)
+  }
+  if (activeKey.value === 'dtTs') {
+    return buildDateFromInputs(rawDate.value, rawTime.value)
+  }
+  return null
+})
 
 /* ISO 8601 (always in UTC) */
-const iso = computed(() => (date.value ? date.value.toISOString() : ''))
+const iso = computed(() => (sourceDate.value ? sourceDate.value.toISOString() : ''))
 
 /* UTC string (RFC1123) */
-const utcString = computed(() => (date.value ? date.value.toUTCString() : ''))
+const utcString = computed(() => (sourceDate.value ? sourceDate.value.toUTCString() : ''))
 
 /* Local string – respects the browser’s locale */
 const localString = computed(() =>
-  date.value ? date.value.toLocaleString(undefined, { timeZoneName: 'short' }) : ''
+  sourceDate.value ? sourceDate.value.toLocaleString(undefined, { timeZoneName: 'short' }) : ''
 )
 
 /* Unix seconds (rounded) */
-const unixSeconds = computed(() => (date.value ? Math.floor(date.value.getTime() / 1000) : ''))
+const unixSeconds = computed(() => (sourceDate.value ? Math.floor(sourceDate.value.getTime() / 1000) : ''))
 
 /* Unix milliseconds (rounded) */
-const unixMillis = computed(() => (date.value ? date.value.getTime() : ''))
+const unixMillis = computed(() => (sourceDate.value ? sourceDate.value.getTime() : ''))
 
 /* Relative time – “x seconds/minutes/hours/days ago” */
 const relative = computed(() => {
-  if (!date.value) return ''
+  if (!sourceDate.value) return ''
 
   const now = Date.now()
-  const diffMs = now - date.value.getTime()
+  const diffMs = now - sourceDate.value.getTime()
   const diffSec = Math.round(diffMs / 1000)
 
   // Future timestamps get a “in …” phrasing
