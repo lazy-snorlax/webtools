@@ -5,12 +5,30 @@
         </div>
 
         <div class="p-6 pt-0">
+          <div class="h3 text-md">Conversion Mode</div>
+          <div class="flex items-justify gap-4">
+            <button v-for="c in categories" :key="c.key" class="btn btn-primary" :class="{ 'btn-outline': activeKey !== c.key }" @click="setActiveKey(c.key)" type="button">
+              {{ c.label }}
+            </button>
+          </div>
+        </div>
+
+        <div class="p-6 pt-0" v-if="activeKey=='tsDate'">
             <div class="space-y-2">
                 <label for="raw" class="text-sm font-medium text-zinc-300">Enter Unix timestamp (seconds or ms):</label>
                 <div class="flex gap-3">
                     <input id="raw" class="input w-full" v-model="rawInput" placeholder="e.g. 1622548800 or 1622548800000" @input="update()" />
                 </div>
                 <small class="small">Accepts both seconds (10 digits) and milliseconds (13 digits)</small>
+            </div>
+        </div>
+
+        <div class="p-6 pt-0" v-if="activeKey=='dtTs'">
+            <div class="space-y-2">
+                <label for="raw" class="text-sm font-medium text-zinc-300">Date</label>
+                <div class="flex gap-3">
+                    <input class="input w-full" type="date" v-model="rawDate" />
+                </div>
             </div>
         </div>
     </div>
@@ -39,7 +57,18 @@
 <script setup>
 import { ref, computed } from 'vue'
 
+const categories = [
+  { key: 'tsDate', label: "Timestamp to Date" },
+  { key: 'dtTs', label: "Date to Timestamp" },
+]
+const activeKey = ref('tsDate')
+
 const rawInput = ref(String(Math.floor(Date.now() / 1000)))
+const rawDate = ref(new Date())
+
+function setActiveKey(key) {
+  activeKey.value = key
+}
 
 function parseTimestamp(value) {
   const num = Number(value.trim())
