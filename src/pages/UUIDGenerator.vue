@@ -9,7 +9,7 @@
         <!-- ==== Version selector (buttons) ==== -->
         <div class="space-y-4">
             <div class="p-4 grid grid-cols-3 gap-3">
-                <button v-for="opt in versionOptions" :key="opt.value" class="btn btn-primary" :class="['btn-outline', { active: config.version === opt.value }]" @click="config.version = opt.value">
+                <button v-for="opt in versionOptions" :key="opt.value" class="btn btn-primary" :class="{'btn-outline' : config.version !== opt.value }" @click="config.version = opt.value">
                     {{ opt.label }}
                 </button>
             </div>
@@ -20,10 +20,10 @@
             <div class="p-4">
                 <span class="label">Letter Case:</span>
                 <div class="grid grid-cols-6 gap-4">
-                    <button class="btn btn-primary" :class="['btn-outline', { active: config.uppercase }]" @click="config.uppercase = true">UPPERCASE</button>
-                    <button class="btn btn-primary" :class="['btn-outline', { active: !config.uppercase }]" @click="config.uppercase = false">lowercase</button>
+                    <button class="btn btn-primary" :class="{ 'btn-outline': config.uppercase !== true }" @click="config.uppercase = true">UPPERCASE</button>
+                    <button class="btn btn-primary"  :class="{ 'btn-outline': config.uppercase !== false }" @click="config.uppercase = false">lowercase</button>
                     <label class="label">
-                        <input type="checkbox" class="checkbox" :checked="['checked' == config.hyphens ]" @click="config.hyphens = !config.hyphens" />
+                        <input type="checkbox" class="checkbox" :checked="{ 'checked': config.hyphens }" @click="config.hyphens = !config.hyphens" />
                         Include Hyphens
                     </label>
                 </div>
