@@ -7,6 +7,7 @@ import JsonFormatter from '@/pages/JsonFormatter.vue'
 import LoremGenerator from '@/pages/LoremGenerator.vue'
 import TimestampConverter from '@/pages/TimestampConverter.vue'
 import UnitConverter from '@/pages/UnitConverter.vue'
+import UUIDGenerator from '@/pages/UUIDGenerator.vue'
 import WorldClock from '@/pages/WorldClock.vue'
 import { createRouter, createWebHistory } from 'vue-router'
 
@@ -54,6 +55,11 @@ const routes = [
   {
     path: "/lorem-generator",
     component: LoremGenerator,
+    meta: { layout: AppLayout }
+  },
+  {
+    path: "/uuid-generator",
+    component: UUIDGenerator,
     meta: { layout: AppLayout }
   },
 ]
