@@ -35,9 +35,8 @@
     <div class="rounded-xl border backdrop-blur-sm mt-4">
         <div class="p-6">
             <!-- Result -->
-            <p v-if="uuid" class="result">
-                <strong>Result:</strong> {{ uuid }}
-            </p>
+            <strong>Result: </strong> 
+            <span v-if="uuid" class="result">{{ uuid }}</span>
         </div>
     </div>
 </template>
