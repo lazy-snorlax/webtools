@@ -6,7 +6,6 @@
             </div>
         </div>
 
-        <!-- ==== Version selector (buttons) ==== -->
         <div class="space-y-4">
             <div class="p-4 grid grid-cols-3 gap-3">
                 <button v-for="opt in versionOptions" :key="opt.value" class="btn btn-primary" :class="{'btn-outline' : config.version !== opt.value }" @click="config.version = opt.value">
@@ -15,7 +14,6 @@
             </div>
         </div>
 
-        <!-- ==== Case selector (buttons) ==== -->
         <div class="space-y-4">
             <div class="p-4">
                 <span class="label">Letter Case:</span>
@@ -23,7 +21,7 @@
                     <button class="btn btn-primary" :class="{ 'btn-outline': config.uppercase !== true }" @click="config.uppercase = true">UPPERCASE</button>
                     <button class="btn btn-primary"  :class="{ 'btn-outline': config.uppercase !== false }" @click="config.uppercase = false">lowercase</button>
                     <label class="label">
-                        <input type="checkbox" class="checkbox" :checked="{ 'checked': config.hyphens }" @click="config.hyphens = !config.hyphens" />
+                        <input type="checkbox" class="checkbox" :checked="config.hyphens" @click="config.hyphens = !config.hyphens" />
                         Include Hyphens
                     </label>
                 </div>
@@ -48,62 +46,54 @@
 import { ref } from 'vue'
 import { v4 as uuidv4, v1 as uuidv1 } from 'uuid'
 
-// ------------------------------------------------------------------
-// Reactive configuration state
-// ------------------------------------------------------------------
+// Default state
 const config = ref({
-  version: 'v4',      // 'v4' | 'v1' | 'nil'
-  uppercase: false,  // true → UPPERCASE, false → lowercase
-  hyphens: true       // true → keep hyphens, false → strip them
+    version: 'v4',      // 'v4' | 'v1' | 'nil'
+    uppercase: false,  // true → UPPERCASE, false → lowercase
+    hyphens: true       // true → keep hyphens, false → strip them
 })
 
 // Options for the version button group (kept separate for readability)
 const versionOptions = [
-  { label: 'v4 (random)', value: 'v4' },
-  { label: 'v1 (timestamp)', value: 'v1' },
-  { label: 'NIL (all zeros)', value: 'nil' }
+    { label: 'v4 (random)', value: 'v4' },
+    { label: 'v1 (timestamp)', value: 'v1' },
+    { label: 'NIL (all zeros)', value: 'nil' }
 ]
 
 // Holds the generated UUID string
 const uuid = ref('')
 
-// ------------------------------------------------------------------
-// Helper: format a raw UUID according to the UI settings
-// ------------------------------------------------------------------
 function formatUuid(raw) {
-  let out = raw
+    let out = raw
 
-  // Upper / lower case
-  out = config.value.uppercase ? out.toUpperCase() : out.toLowerCase()
+    // Upper / lower case
+    out = config.value.uppercase ? out.toUpperCase() : out.toLowerCase()
 
-  // Hyphen handling
-  if (!config.value.hyphens) {
-    out = out.replace(/-/g, '')
-  }
+    // Hyphen handling
+    if (!config.value.hyphens) {
+        out = out.replace(/-/g, '')
+    }
 
-  return out
+    return out
 }
 
-// ------------------------------------------------------------------
-// Main generation routine
-// ------------------------------------------------------------------
 function generate() {
-  let raw
+    let raw
 
-  switch (config.value.version) {
-    case 'v4':
-      raw = uuidv4()
-      break
-    case 'v1':
-      raw = uuidv1()
-      break
-    case 'nil':
-      raw = '00000000-0000-0000-0000-000000000000'
-      break
-    default:
-      raw = ''
-  }
+    switch (config.value.version) {
+        case 'v4':
+            raw = uuidv4()
+            break
+        case 'v1':
+            raw = uuidv1()
+            break
+        case 'nil':
+            raw = '00000000-0000-0000-0000-000000000000'
+            break
+        default:
+            raw = ''
+    }
 
-  uuid.value = formatUuid(raw)
+    uuid.value = formatUuid(raw)
 }
 </script>
