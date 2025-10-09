@@ -10,6 +10,7 @@
                 <!-- <option disabled selected>Pick a Conversion</option> -->
                 <option>PHP Array</option>
                 <option>Go Slice</option>
+                <option>XML</option>
             </select>
             <button class="btn btn-primary" @click="convertJson">Convert</button>
             <button class="btn btn-primary" @click="clearJson">Clear</button>
@@ -78,6 +79,9 @@ function convertJson() {
                 break;
             case "Go Slice":
                 formatted.value = jsonToGoSlice(parsed)
+                break;
+            case "XML":
+                formatted.value = jsonToXml(parsed)
                 break;
             default:
                 break;
@@ -162,5 +166,83 @@ function jsonToGoSlice(data, indentLvl = 0) {
         return `"${escKey}": ${val}`;
     });
     return `map[string]interface{}{\n${indent}    ${entries.join(`,\n${indent}    `)}\n${indent}}`;
+}
+
+/**
+ * Convert a JavaScript value (already parsed from JSON) to XML.
+ *
+ * @param {*} data           The value to convert.
+ * @param {string} nodeName The name of the current XML element.
+ * @param {number} depth     Current indentation depth (used internally).
+ * @returns {string} XML fragment.
+ */
+function jsonToXml(data, nodeName = 'root', depth = 0) {
+    const indent = '  '.repeat(depth);               // two‑space indent
+    const nl = '\n';
+
+    // Helper to escape characters that are illegal inside XML text/attributes
+    const escape = (str) =>
+        String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&apos;');
+
+    // ----- Primitive values -------------------------------------------------
+    if (
+        data === null ||
+        typeof data === 'number' ||
+        typeof data === 'boolean' ||
+        typeof data === 'string'
+    ) {
+        const text = data === null ? '' : escape(data);
+        return `${indent}<${nodeName}>${text}</${nodeName}>`;
+    }
+
+    // ----- Arrays -----------------------------------------------------------
+    if (Array.isArray(data)) {
+        // An empty array → self‑closing tag
+        if (data.length === 0) {
+            return `${indent}<${nodeName}/>`;
+        }
+
+        // Each item becomes its own element with the same name (or <item> if you prefer)
+        return data.map((item) => jsonToXml(item, nodeName, depth)).join(nl);
+    }
+
+    // ----- Objects -----------------------------------------------------------
+    // Separate attributes (keys that start with '@') from child elements
+    const attrs = [];
+    const children = [];
+
+    for (const [key, value] of Object.entries(data)) {
+        if (key.startsWith('@')) {
+            // Attribute – strip the leading '@' for the real attribute name
+            attrs.push(`${key.slice(1)}="${escape(value)}"`);
+        } else if (key === '#text') {
+            // Special key for raw text content inside the element
+            children.push(escape(value));
+        } else {
+            // Normal child element
+            children.push(jsonToXml(value, key, depth + 1));
+        }
+    }
+
+    const attrString = attrs.length ? ' ' + attrs.join(' ') : '';
+
+    // No children → self‑closing tag
+    if (children.length === 0) {
+        return `${indent}<${nodeName}${attrString}/>`;
+    }
+
+    // One text child without further nesting → inline representation
+    if (children.length === 1 && !children[0].includes('\n')) {
+        return `${indent}<${nodeName}${attrString}>${children[0]}</${nodeName}>`;
+    }
+
+    // Otherwise, pretty‑print with line breaks
+    const inner = children.join(nl);
+    return `${indent}<${nodeName}${attrString}>${nl}${inner}${nl}${indent}</${nodeName}>`;
 }
 </script>
