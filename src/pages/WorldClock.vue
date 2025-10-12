@@ -50,8 +50,8 @@ const timeZones = [
   'Asia/Kolkata',
   'Australia/Sydney',
   'Australia/Adelaide',
-  'New_Zealand/Auckland',
-  'New_Zealand/Wellington',
+  'Pacific/Auckland',
+  'Pacific/Wellington',
 ]
 
 // ------------------------------------------------------------------
