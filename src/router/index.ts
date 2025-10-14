@@ -9,6 +9,8 @@ import TimestampConverter from '@/pages/TimestampConverter.vue'
 import UnitConverter from '@/pages/UnitConverter.vue'
 import UUIDGenerator from '@/pages/UUIDGenerator.vue'
 import WorldClock from '@/pages/WorldClock.vue'
+import XMLFormatter from '@/pages/XMLFormatter.vue'
+import XMLConverter from '@/pages/XMLConverter.vue'
 import { createRouter, createWebHistory } from 'vue-router'
 
 const routes = [
@@ -28,6 +30,11 @@ const routes = [
     meta: { layout: AppLayout }
   },
   {
+    path: "/xml-formatter",
+    component: XMLFormatter,
+    meta: { layout: AppLayout }
+  },
+  {
     path: "/json-formatter",
     component: JsonFormatter,
     meta: { layout: AppLayout }
@@ -35,6 +42,11 @@ const routes = [
   {
     path: "/json-converter",
     component: JsonConverter,
+    meta: { layout: AppLayout }
+  },
+  {
+    path: "/xml-converter",
+    component: XMLConverter,
     meta: { layout: AppLayout }
   },
   {
