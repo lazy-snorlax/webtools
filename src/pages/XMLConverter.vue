@@ -7,7 +7,7 @@
       <div class="p-4">
         <div class="flex flex-wrap items-center gap-2 text-sm">
             <select v-model="conversion" class="select select-primary">
-                <!-- <option disabled selected>Pick a Conversion</option> -->
+                <option disabled value="">Pick a Conversion</option>
                 <option>JSON</option>
             </select>
             <button class="btn btn-primary" @click="convertXML">Convert</button>
@@ -16,15 +16,8 @@
       </div>
     </div>
     
-    <div v-if="error" class="rounded-xl border backdrop-blur-sm border-error text-error">
-      <div class="p-4">
-        <p>{{ error }}</p>
-      </div>
-    </div>
-    <div v-else class="rounded-xl border backdrop-blur-sm border-success text-success">
-      <div class="p-4">
-        <p>Valid XML</p>
-      </div>
+    <div v-if="statusMessage" :class="statusClass" class="rounded-xl border backdrop-blur-sm p-4">
+      <p>{{ statusMessage }}</p>
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -44,7 +37,7 @@
           <h3 class="text-lg font-semibold">Output</h3>
         </div>
         <div class="p-0">
-          <textarea v-model="formatted" rows="20" class="flex w-full textarea "></textarea>
+          <textarea v-model="formatted" rows="20" readonly class="flex w-full textarea "></textarea>
         </div>
       </div>
     </div>
@@ -64,19 +57,34 @@
 </template>
 
 <script setup lang="js">
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 
 // Reactive state
 const rawInput = ref('');
 const formatted = ref('');
 const error = ref('');
 const conversion = ref('JSON')
-const sample = '<book id="b1"><title>Effective JavaScript</title><author>David Herman</author><year>2012</year><tags><tag>programming</tag><tag>javascript</tag></tags></book>'
+const sample = `<book id="b1">
+    <title>Effective JavaScript</title>
+    <author>David Herman</author>
+    <year>2012</year>
+    <tags>
+        <tag>programming</tag>
+        <tag>javascript</tag>
+    </tags>
+</book>`
 
-function loadSample() {
-    rawInput.value = sample
-}
+const statusMessage = computed(() => {
+  if (error.value) return error.value;
+  if (formatted.value) return '✅ Conversion succeeded';
+  return ''; // nothing shown initially
+});
+const statusClass = computed(() => ({
+  'border-error text-error': !!error.value,
+  'border-success text-success': !error.value && !!formatted.value,
+}));
 
+function loadSample() { rawInput.value = sample }
 function clearXML() {
   rawInput.value = '';
   error.value = '';
