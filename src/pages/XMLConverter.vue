@@ -10,6 +10,7 @@
                 <option disabled value="">Pick a Conversion</option>
                 <option>JSON</option>
                 <option>PHP Array</option>
+                <option>Go Slice</option>
             </select>
             <button class="btn btn-primary" @click="convertXML">Convert</button>
             <button class="btn btn-primary" @click="clearXML">Clear</button>
@@ -103,6 +104,9 @@ function convertXML() {
                 break;
             case "PHP Array":
                 formatted.value = XMLToPhpArray(rawInput.value)
+                break;
+            case "Go Slice":
+                formatted.value = XMLToGoSlice(rawInput.value)
                 break;
             default:
                 break;
@@ -313,4 +317,145 @@ function phpSerialize(value, depth) {
 
     return `[\n${parts.join(',\n')}\n${indent(depth)}]`;
 }
+
+/**
+ * Convert XML → Go slice literal.
+ *
+ * The output is a Go literal that can be pasted straight into a .go file,
+ * e.g.
+ *
+ * []map[string]interface{}{
+ *     {"tag":"book","attributes":map[string]string{"id":"b1"},
+ *      "children":[]interface{}{
+ *          {"tag":"title","value":"Effective JavaScript"},
+ *          {"tag":"author","value":"David Herman"},
+ *          {"tag":"year","value":"2012"},
+ *          {"tag":"tags","children":[]interface{}{
+ *              {"tag":"tag","value":"programming"},
+ *              {"tag":"tag","value":"javascript"},
+ *          }},
+ *      }},
+ * }
+ *
+ * @param {string|Document} xml
+ * @returns {string} Go slice literal
+ */
+function XMLToGoSlice(xml) {
+    // -----------------------------------------------------------------
+    // 1️⃣ Parse XML (same logic used by XMLToJson)
+    // -----------------------------------------------------------------
+    if (typeof xml === 'string') {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(xml, 'application/xml');
+        const err = doc.querySelector('parsererror');
+        if (err) throw new Error('Invalid XML: ' + err.textContent);
+        xml = doc;
+    }
+
+    // -----------------------------------------------------------------
+    // 2️⃣ Build a neutral JS representation (similar to XMLToJson)
+    // -----------------------------------------------------------------
+    const buildNode = node => {
+        // Text node → plain string (trimmed)
+        if (node.nodeType === Node.TEXT_NODE) {
+            const txt = node.nodeValue.trim();
+            return txt ? txt : null;
+        }
+
+        // Element node → object with tag, attributes, children
+        const result = {
+            tag: node.nodeName,
+            attributes: {},
+            children: []
+        };
+
+        // ----- attributes -------------------------------------------------
+        if (node.attributes?.length) {
+            for (const a of node.attributes) {
+                result.attributes[a.name] = a.value;
+            }
+        }
+
+        // ----- children ---------------------------------------------------
+        const childNodes = Array.from(node.childNodes);
+        for (const child of childNodes) {
+            const built = buildNode(child);
+            if (built !== null) {
+                // If the child is a plain string, store it under a special key
+                // “value”. Otherwise push the whole object.
+                if (typeof built === 'string') {
+                    // Simple leaf element – store its text as “value”
+                    result.children.push({ tag: child.nodeName, value: built });
+                } else {
+                    result.children.push(built);
+                }
+            }
+        }
+
+        // If there are no attributes and only one child that is a leaf,
+        // collapse the structure to a simpler form (mirrors XMLToJson behaviour)
+        if (
+            Object.keys(result.attributes).length === 0 &&
+            result.children.length === 1 &&
+            result.children[0].value !== undefined
+        ) {
+            return result.children[0].value;
+        }
+
+        return result;
+    };
+
+    const root = xml.documentElement || xml;
+    const tree = [buildNode(root)]; // always wrap in a slice (top‑level slice)
+
+    // -----------------------------------------------------------------
+    // 3️⃣ Serialise the JS tree into Go syntax
+    // -----------------------------------------------------------------
+    return goSerialize(tree, 0);
+}
+
+/**
+ * Recursively turn a JS value into a nicely indented Go literal.
+ *
+ * @param {*} value   Primitive, array, or plain object.
+ * @param {number} depth  Current indentation level.
+ * @returns {string}
+ */
+function goSerialize(value, depth) {
+    const indent = lvl => '    '.repeat(lvl); // 4‑space indent
+
+    // -------- primitives -------------------------------------------------
+    if (value === null) return 'nil';
+    if (typeof value === 'boolean') return value ? 'true' : 'false';
+    if (typeof value === 'number') return Number.isFinite(value) ? value.toString() : '0';
+
+    // -------- strings ----------------------------------------------------
+    if (typeof value === 'string') {
+        // Escape backslashes and double quotes for Go double‑quoted strings.
+        const esc = value
+            .replace(/\\/g, '\\\\')
+            .replace(/"/g, '\\"')
+            .replace(/\n/g, '\\n')
+            .replace(/\r/g, '\\r');
+        return `"${esc}"`;
+    }
+
+    // -------- arrays / slices --------------------------------------------
+    if (Array.isArray(value)) {
+        if (!value.length) return '[]interface{}{}';
+        const items = value.map(v => goSerialize(v, depth + 1));
+        return `[]interface{}{\n${indent(depth + 1)}${items.join(`,\n${indent(depth + 1)}`)}\n${indent(depth)}}`;
+    }
+
+    // -------- objects (maps) ---------------------------------------------
+    // We treat every object as a map[string]interface{}
+    const entries = Object.entries(value).map(([k, v]) => {
+        const key = `"${k}"`; // map keys are always strings
+        const val = goSerialize(v, depth + 1);
+        return `${indent(depth + 1)}${key}: ${val}`;
+    });
+
+    return `map[string]interface{}{\n${entries.join(',\n')}\n${indent(depth)}}`;
+}
+
 </script>
