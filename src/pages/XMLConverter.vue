@@ -151,8 +151,8 @@ function XMLToJson(xml) {
         // --- Attributes ---------------------------------------------------------
         if (node.attributes && node.attributes.length > 0) {
             for (let attr of node.attributes) {
-                // Prefix attribute names with '@' to avoid colliding with child element names.
-                obj[`@${attr.name}`] = attr.value;
+                // Prefix attribute names with '_' to avoid colliding with child element names.
+                obj[`_${attr.name}`] = attr.value;
             }
         }
 
@@ -231,9 +231,9 @@ function XMLToPhpArray(xml) {
 
         const obj = {};
 
-        // attributes → '@attr'
+        // attributes → '_attr'
         if (node.attributes?.length) {
-        for (const a of node.attributes) obj[`@${a.name}`] = a.value;
+        for (const a of node.attributes) obj[`_${a.name}`] = a.value;
         }
 
         const children = Array.from(node.childNodes);
