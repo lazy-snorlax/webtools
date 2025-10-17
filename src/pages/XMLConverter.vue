@@ -119,7 +119,6 @@ function convertXML() {
 
 /**
  * Convert an XML string (or an XML Document) to a JSON‑compatible object.
- *
  * @param {string|Document} xml   – The XML source. Can be a string or a parsed DOM.
  * @returns {object}               – The resulting JavaScript object.
  */
